@@ -5,6 +5,7 @@ output:
     keep_md: true
 ---
 
+To show this, the library lubridate has to be installed.
 
 ## Loading and preprocessing the data
 
@@ -29,7 +30,12 @@ Calculate the total number of steps taken per day.
 
 ```{R, echo=TRUE}
    stepsPerDay <- aggregate(steps ~ date, data, sum)
-	 stepsPerDay
+   stepsPerDay
+```
+
+Show the histogram, mean and median. 
+
+```{R, echo=TRUE}
    hist(stepsPerDay$steps, breaks=20, xlim=c(0,25000), xlab="Steps per day", main="Histogram without the NA values")
    mean(stepsPerDay$steps) 
    median(stepsPerDay$steps)
@@ -37,10 +43,16 @@ Calculate the total number of steps taken per day.
 
 ## What is the average daily activity pattern?
 
+Show a plot for the average steps for each interval.
 	
 ```{R, echo=TRUE}
    intervalSteps <- aggregate(steps ~ interval, data, mean)
-   plot(intervalSteps$interval, intervalSteps$steps, type="l")
+   plot(intervalSteps$interval, intervalSteps$steps, type="l", xlab="Interval", ylab="Average steps")
+```
+
+Find the interval with the highest average
+
+```{R, echo=TRUE}
    maxInterval <- intervalSteps[intervalSteps$steps==max(intervalSteps$steps),]
    maxInterval$interval
 ```
@@ -68,11 +80,10 @@ Show the histogram, mean and median with the missing values filled.
 
 ```{R, echo=TRUE}
    newStepsPerDay <- aggregate(steps ~ date, newData, sum)
-	 newStepsPerDay
+   newStepsPerDay
    hist(newStepsPerDay$steps, breaks=20, xlim=c(0,25000), xlab="Steps per day", main="NA values filled")
    mean(newStepsPerDay$steps) 
    median(newStepsPerDay$steps)
-   
 ```
 
 There are no substantial difference between the histograms with and without the NA values  
@@ -86,6 +97,9 @@ Use the library "lubridate" instead of weekdays() to get rid of the names in the
    library(lubridate)
 ```
 
+Add a factor variable in the dataset indicating whether a given date is a weekday or weekend
+day. 
+
 ```{R, echo=TRUE}
    newData$day <- ifelse(wday(newData$date) == 1, "weekend", 
                   ifelse(wday(newData$date) == 7, "weekend", "weekday"))
@@ -93,6 +107,27 @@ Use the library "lubridate" instead of weekdays() to get rid of the names in the
    newData$day <- as.factor(newData$day)
 ```
 
+Calculate the mean for the weekend and the weekdays
 
+```{R, echo=TRUE}
+   weekEnd <- aggregate(steps ~ interval, newData[newData$day == "weekend",], mean) 
+   weekDay <- aggregate(steps ~ interval, newData[newData$day == "weekday",], mean) 
+```
 
+Show the two plots.
 
+```{R, echo=TRUE}
+   par(mfrow = c(2,1), cex.axis=0.7, 
+          oma = c(3,4,0,0) + 0.1,
+          mar = c(2,0,1,1) + 0.1)   
+   plot(weekEnd$interval, weekEnd$steps, type="l", ylab="", xlab="")
+   mtext("Weekend", at= c(6,5), cex=0.7)
+
+   plot(weekDay$interval, weekDay$steps, type="l", ylab="", xlab="")
+   mtext("Weekday", at= c(6,5), cex=0.7)
+
+   mtext("Interval", side=1, line = 2, cex=0.8)
+   title(ylab = "Average steps", cex.lab=0.8, outer = TRUE)
+```
+
+There is no difference in activity patterns between weekdays and weekend.
