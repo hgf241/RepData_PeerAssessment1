@@ -36,10 +36,16 @@ Calculate the total number of steps taken per day.
 Show the histogram, mean and median. 
 
 ```{R, echo=TRUE}
-   hist(stepsPerDay$steps, breaks=20, xlim=c(0,25000), xlab="Steps per day", main="Histogram without the NA values")
-   mean(stepsPerDay$steps) 
-   median(stepsPerDay$steps)
+    hist(stepsPerDay$steps, breaks=20, xlim=c(0,25000), xlab="Steps per day", main="Histogram without the NA values")
+   meanValue <- mean(stepsPerDay$steps) 
+   meanValue
+   medianValue <- median(stepsPerDay$steps)
+   medianValue
+   options(scipen = 1, digits = 2)
+
 ```
+
+**The mean of the steps per day is `r round(meanValue,2)` and the median is `r medianValue`.**
 
 ## What is the average daily activity pattern?
 
@@ -56,7 +62,8 @@ Find the interval with the highest average
    maxInterval <- intervalSteps[intervalSteps$steps==max(intervalSteps$steps),]
    maxInterval$interval
 ```
-	
+
+**The interval with number `r maxInterval$interval` has the highest average.**
 
 ## Imputing missing values
 
@@ -86,7 +93,7 @@ Show the histogram, mean and median with the missing values filled.
    median(newStepsPerDay$steps)
 ```
 
-There are no substantial difference between the histograms with and without the NA values  
+**There are no substantial difference between the histograms with and without the NA values.**
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -130,4 +137,4 @@ Show the two plots.
    title(ylab = "Average steps", cex.lab=0.8, outer = TRUE)
 ```
 
-There is no difference in activity patterns between weekdays and weekend.
+**There is no difference in activity patterns between weekdays and weekend.**
